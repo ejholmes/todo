@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/ejholmes/todo"
@@ -15,6 +15,6 @@ func main() {
 	c := todo.New()
 	s := todo.NewServer(c)
 
-	fmt.Printf("Listening on %s\n", *port)
-	http.ListenAndServe(":"+*port, s)
+	log.Printf("Listening on %s\n", *port)
+	log.Fatal(http.ListenAndServe(":"+*port, s))
 }

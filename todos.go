@@ -17,6 +17,17 @@ type Todo struct {
 	CompletedAt *time.Time `json:"completed_at"`
 }
 
+// Complete marks the Todo as complete.
+func (t *Todo) Complete() {
+	now := time.Now()
+	t.CompletedAt = &now
+}
+
+// Uncomplete clears the completed status.
+func (t *Todo) Uncomplete() {
+	t.CompletedAt = nil
+}
+
 // TodosService provides methods for CRUD'ing todos.
 type TodosService struct {
 	todos []*Todo
@@ -30,6 +41,17 @@ func NewTodosService() *TodosService {
 // All returns all Todos.
 func (s *TodosService) All() ([]*Todo, error) {
 	return s.todos, nil
+}
+
+// Find fins a single Todo by id.
+func (s *TodosService) Find(id string) (*Todo, error) {
+	for _, t := range s.todos {
+		if t.ID == id {
+			return t, nil
+		}
+	}
+
+	return nil, nil
 }
 
 // Insert inserts a Todo.
