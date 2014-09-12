@@ -3,24 +3,24 @@ package todo
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
+	"regexp"
 
 	"github.com/gorilla/mux"
 )
 
 var routes = map[path]HandlerFunc{
-	"GET /todos":                  TodosList,
-	"POST /todos":                 TodosCreate,
+	"GET    /todos":               TodosList,
+	"POST   /todos":               TodosCreate,
 	"DELETE /todos/{id}":          TodosDelete,
-	"PATCH /todos/{id}":           TodosUpdate,
-	"POST /todos/{id}/complete":   TodosComplete,
+	"PATCH  /todos/{id}":          TodosUpdate,
+	"POST   /todos/{id}/complete": TodosComplete,
 	"DELETE /todos/{id}/complete": TodosUncomplete,
 }
 
 type path string
 
 func (p path) extract() (method, path string) {
-	c := strings.Split(string(p), " ")
+	c := regexp.MustCompile(`\s+`).Split(string(p), -1)
 	return c[0], c[1]
 }
 

@@ -161,8 +161,8 @@ func TestPath(t *testing.T) {
 		method string
 		path   string
 	}{
-		{"GET /todos", "GET", "/todos"},
-		{"POST /todos", "POST", "/todos"},
+		{"GET   /todos", "GET", "/todos"},
+		{"POST  /todos", "POST", "/todos"},
 		{"PATCH /todos/{id}", "PATCH", "/todos/{id}"},
 	}
 
