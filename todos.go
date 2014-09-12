@@ -6,6 +6,24 @@ import (
 	"code.google.com/p/go-uuid/uuid"
 )
 
+// TodosService is our interface for CRUD'ing Todo's.
+type TodosService interface {
+	// All returns a slice of all the todos in the store.
+	All() ([]*Todo, error)
+
+	// Create creates a new Todo and inserts it.
+	Create(text string) (*Todo, error)
+
+	// Find finds a single Todo by id.
+	Find(id string) (*Todo, error)
+
+	// Delete removes a single Todo by id.
+	Delete(id string) (*Todo, error)
+
+	// Insert inserts the Todo into the store.
+	Insert(*Todo) (*Todo, error)
+}
+
 // GenID is used to generate a unique id.
 var GenID = func() string {
 	return uuid.New()
@@ -33,18 +51,19 @@ func (t *Todo) Uncomplete() {
 	t.CompletedAt = nil
 }
 
-// TodosService provides methods for CRUD'ing todos.
-type TodosService struct {
+// todosService is an implementation of the TodosService interface
+// that stores Todos in memory.
+type todosService struct {
 	todos map[string]*Todo
 }
 
 // NewTodosService returns a new TodosService instance.
-func NewTodosService() *TodosService {
-	return &TodosService{todos: make(map[string]*Todo)}
+func NewTodosService() TodosService {
+	return &todosService{todos: make(map[string]*Todo)}
 }
 
 // All returns all Todos.
-func (s *TodosService) All() ([]*Todo, error) {
+func (s *todosService) All() ([]*Todo, error) {
 	todos := make([]*Todo, 0, len(s.todos))
 
 	for _, t := range s.todos {
@@ -55,13 +74,13 @@ func (s *TodosService) All() ([]*Todo, error) {
 }
 
 // Find finds a single Todo by id.
-func (s *TodosService) Find(id string) (*Todo, error) {
+func (s *todosService) Find(id string) (*Todo, error) {
 	t := s.todos[id]
 	return t, nil
 }
 
 // Delete delets a Todo by id.
-func (s *TodosService) Delete(id string) (*Todo, error) {
+func (s *todosService) Delete(id string) (*Todo, error) {
 	t, err := s.Find(id)
 	if err != nil {
 		return nil, err
@@ -72,13 +91,13 @@ func (s *TodosService) Delete(id string) (*Todo, error) {
 }
 
 // Insert inserts a Todo.
-func (s *TodosService) Insert(t *Todo) (*Todo, error) {
+func (s *todosService) Insert(t *Todo) (*Todo, error) {
 	t.ID = GenID()
 	s.todos[t.ID] = t
 	return t, nil
 }
 
 // Create initializes a new Todo and inserts it.
-func (s *TodosService) Create(text string) (*Todo, error) {
+func (s *todosService) Create(text string) (*Todo, error) {
 	return s.Insert(&Todo{Text: text})
 }

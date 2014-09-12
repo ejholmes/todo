@@ -2,7 +2,7 @@ package todo
 
 // Client wraps services.
 type Client struct {
-	Todos *TodosService
+	Todos TodosService
 }
 
 // New returns a new Client.
