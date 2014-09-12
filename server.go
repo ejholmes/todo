@@ -66,6 +66,7 @@ func NewServer(c *Client) *Server {
 	s.Handle("GET", "/todos", TodosList)
 	s.Handle("POST", "/todos", TodosCreate)
 	s.Handle("DELETE", "/todos/{id}", TodosDelete)
+	s.Handle("PATCH", "/todos/{id}", TodosUpdate)
 	s.Handle("POST", "/todos/{id}/complete", TodosComplete)
 	s.Handle("DELETE", "/todos/{id}/complete", TodosUncomplete)
 
@@ -116,6 +117,19 @@ func TodosCreate(c *Client, w *ResponseWriter, r *Request) {
 func TodosDelete(c *Client, w *ResponseWriter, r *Request) {
 	withTodo(c, w, r, func(t *Todo) {
 		c.Todos.Delete(t.ID)
+	})
+}
+
+// TodosUpdate updates a Todo.
+func TodosUpdate(c *Client, w *ResponseWriter, r *Request) {
+	var u Todo
+	if err := r.Decode(&u); err != nil {
+		w.Error(400, ErrBadRequest)
+		return
+	}
+
+	withTodo(c, w, r, func(t *Todo) {
+		t.Text = u.Text
 	})
 }
 

@@ -30,6 +30,16 @@ Delete a todo.
 {"id":"faf24dae-ce0d-4b93-9efc-1051e1680366","text":"Hello","completed_at":null}
 ```
 
+**PATCH /todos/:id**
+
+Update a todo
+
+**Example Response**
+
+```json
+{"id":"faf24dae-ce0d-4b93-9efc-1051e1680366","text":"Hello World","completed_at":null}
+```
+
 **POST /todos/:id/complete**
 
 Mark the todo is complete.

@@ -124,3 +124,33 @@ func TestTodosDelete(t *testing.T) {
 		tt.Check(resp)
 	}
 }
+
+func TestTodosUpdate(t *testing.T) {
+	tests := []RequestTest{
+		{
+			Before: func(c *Client) {
+				c.Todos.Create("Hello")
+			},
+			Request: MustRequest("PATCH", "/todos/1234", strings.NewReader(`{"text":"Hello World"}`)),
+			Check: func(resp *httptest.ResponseRecorder) {
+				body := `{"id":"1234","text":"Hello World","completed_at":null}` + "\n"
+
+				if resp.Body.String() != body {
+					t.Errorf("Body => %s; want %s", resp.Body.String(), body)
+				}
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		c := New()
+		s := NewServer(c)
+
+		resp := httptest.NewRecorder()
+		req := tt.Request
+
+		tt.Before(c)
+		s.ServeHTTP(resp, req)
+		tt.Check(resp)
+	}
+}
