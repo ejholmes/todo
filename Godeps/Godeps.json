@@ -1,0 +1,22 @@
+{
+	"ImportPath": "github.com/remind101/todo",
+	"GoVersion": "go1.3",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "code.google.com/p/go-uuid/uuid",
+			"Comment": "null-12",
+			"Rev": "7dda39b2e7d5e265014674c5af696ba4186679e9"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "1f3e8a46c5bb4c29971d9867ede6e198ca5eddce"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "136d54f81f00414c45c3c68dd47e98cc97519c5e"
+		}
+	]
+}
