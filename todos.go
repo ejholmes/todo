@@ -30,34 +30,46 @@ func (t *Todo) Uncomplete() {
 
 // TodosService provides methods for CRUD'ing todos.
 type TodosService struct {
-	todos []*Todo
+	todos map[string]*Todo
 }
 
 // NewTodosService returns a new TodosService instance.
 func NewTodosService() *TodosService {
-	return &TodosService{todos: make([]*Todo, 0)}
+	return &TodosService{todos: make(map[string]*Todo)}
 }
 
 // All returns all Todos.
 func (s *TodosService) All() ([]*Todo, error) {
-	return s.todos, nil
-}
+	todos := make([]*Todo, 0, len(s.todos))
 
-// Find fins a single Todo by id.
-func (s *TodosService) Find(id string) (*Todo, error) {
 	for _, t := range s.todos {
-		if t.ID == id {
-			return t, nil
-		}
+		todos = append(todos, t)
 	}
 
-	return nil, nil
+	return todos, nil
+}
+
+// Find finds a single Todo by id.
+func (s *TodosService) Find(id string) (*Todo, error) {
+	t := s.todos[id]
+	return t, nil
+}
+
+// Delete delets a Todo by id.
+func (s *TodosService) Delete(id string) (*Todo, error) {
+	t, err := s.Find(id)
+	if err != nil {
+		return nil, err
+	}
+
+	delete(s.todos, t.ID)
+	return t, nil
 }
 
 // Insert inserts a Todo.
 func (s *TodosService) Insert(t *Todo) (*Todo, error) {
 	t.ID = uuid.New()
-	s.todos = append(s.todos, t)
+	s.todos[t.ID] = t
 	return t, nil
 }
 
