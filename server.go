@@ -65,6 +65,7 @@ func NewServer(c *Client) *Server {
 
 	s.Handle("GET", "/todos", TodosList)
 	s.Handle("POST", "/todos", TodosCreate)
+	s.Handle("DELETE", "/todos/{id}", TodosDelete)
 	s.Handle("POST", "/todos/{id}/complete", TodosComplete)
 	s.Handle("DELETE", "/todos/{id}/complete", TodosUncomplete)
 
@@ -109,6 +110,13 @@ func TodosCreate(c *Client, w *ResponseWriter, r *Request) {
 	}
 
 	w.Encode(t)
+}
+
+// TodosDelete deletes a Todo.
+func TodosDelete(c *Client, w *ResponseWriter, r *Request) {
+	withTodo(c, w, r, func(t *Todo) {
+		c.Todos.Delete(t.ID)
+	})
 }
 
 // TodosComplete marks a Todo as complete.
