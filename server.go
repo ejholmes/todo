@@ -3,9 +3,26 @@ package todo
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
+
+var routes = map[path]HandlerFunc{
+	"GET /todos":                  TodosList,
+	"POST /todos":                 TodosCreate,
+	"DELETE /todos/{id}":          TodosDelete,
+	"PATCH /todos/{id}":           TodosUpdate,
+	"POST /todos/{id}/complete":   TodosComplete,
+	"DELETE /todos/{id}/complete": TodosUncomplete,
+}
+
+type path string
+
+func (p path) extract() (method, path string) {
+	c := strings.Split(string(p), " ")
+	return c[0], c[1]
+}
 
 // ErrorResource represents an error response.
 type ErrorResource struct {
@@ -57,12 +74,10 @@ type Server struct {
 func NewServer(c *Client) *Server {
 	s := &Server{Client: c, mux: mux.NewRouter()}
 
-	s.Handle("GET", "/todos", TodosList)
-	s.Handle("POST", "/todos", TodosCreate)
-	s.Handle("DELETE", "/todos/{id}", TodosDelete)
-	s.Handle("PATCH", "/todos/{id}", TodosUpdate)
-	s.Handle("POST", "/todos/{id}/complete", TodosComplete)
-	s.Handle("DELETE", "/todos/{id}/complete", TodosUncomplete)
+	for path, h := range routes {
+		m, p := path.extract()
+		s.Handle(m, p, h)
+	}
 
 	return s
 }

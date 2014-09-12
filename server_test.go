@@ -154,3 +154,27 @@ func TestTodosUpdate(t *testing.T) {
 		tt.Check(resp)
 	}
 }
+
+func TestPath(t *testing.T) {
+	tests := []struct {
+		in     string
+		method string
+		path   string
+	}{
+		{"GET /todos", "GET", "/todos"},
+		{"POST /todos", "POST", "/todos"},
+		{"PATCH /todos/{id}", "PATCH", "/todos/{id}"},
+	}
+
+	for _, tt := range tests {
+		m, p := path(tt.in).extract()
+
+		if m != tt.method {
+			t.Errorf("Method => %s; want %s", m, tt.method)
+		}
+
+		if p != tt.path {
+			t.Errorf("Path => %s; want %s", p, tt.path)
+		}
+	}
+}
