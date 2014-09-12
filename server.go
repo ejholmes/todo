@@ -2,25 +2,14 @@ package todo
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
-var (
-	// ErrBadRequest represents a 400 error.
-	ErrBadRequest = errors.New(http.StatusText(400))
-
-	// ErrNotFound represents a 404 error.
-	ErrNotFound = errors.New(http.StatusText(404))
-
-	// ErrInternalServer represents a 500 error.
-	ErrInternalServer = errors.New(http.StatusText(500))
-)
-
 // ErrorResource represents an error response.
 type ErrorResource struct {
+	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
@@ -38,9 +27,14 @@ func (w *ResponseWriter) Encode(v interface{}) error {
 }
 
 // Error response with an error.
-func (w *ResponseWriter) Error(code int, err error) error {
+func (w *ResponseWriter) Error(code int) error {
 	w.WriteHeader(code)
-	return w.Encode(&ErrorResource{Message: err.Error()})
+	return w.Encode(
+		&ErrorResource{
+			Code:    code,
+			Message: http.StatusText(code),
+		},
+	)
 }
 
 // Request wraps an http.Request.
@@ -91,7 +85,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func TodosList(c *Client, w *ResponseWriter, r *Request) {
 	todos, err := c.Todos.All()
 	if err != nil {
-		w.Error(500, ErrInternalServer)
+		w.Error(http.StatusInternalServerError)
 	}
 
 	w.Encode(todos)
@@ -101,12 +95,12 @@ func TodosList(c *Client, w *ResponseWriter, r *Request) {
 func TodosCreate(c *Client, w *ResponseWriter, r *Request) {
 	var t Todo
 	if err := r.Decode(&t); err != nil {
-		w.Error(400, ErrBadRequest)
+		w.Error(http.StatusBadRequest)
 		return
 	}
 
 	if _, err := c.Todos.Insert(&t); err != nil {
-		w.Error(400, ErrBadRequest)
+		w.Error(http.StatusBadRequest)
 		return
 	}
 
@@ -124,7 +118,7 @@ func TodosDelete(c *Client, w *ResponseWriter, r *Request) {
 func TodosUpdate(c *Client, w *ResponseWriter, r *Request) {
 	var u Todo
 	if err := r.Decode(&u); err != nil {
-		w.Error(400, ErrBadRequest)
+		w.Error(http.StatusBadRequest)
 		return
 	}
 
@@ -152,12 +146,12 @@ func withTodo(c *Client, w *ResponseWriter, r *Request, fn func(*Todo)) {
 
 	t, err := c.Todos.Find(vars["id"])
 	if err != nil {
-		w.Error(400, ErrBadRequest)
+		w.Error(http.StatusBadRequest)
 		return
 	}
 
 	if t == nil {
-		w.Error(404, ErrNotFound)
+		w.Error(http.StatusNotFound)
 		return
 	}
 
