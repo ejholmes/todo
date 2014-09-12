@@ -1,8 +1,10 @@
 package todo
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -12,8 +14,8 @@ func init() {
 	}
 }
 
-func MustRequest(method, path string) *http.Request {
-	req, _ := http.NewRequest(method, path, nil)
+func MustRequest(method, path string, r io.Reader) *http.Request {
+	req, _ := http.NewRequest(method, path, r)
 	return req
 }
 
@@ -27,7 +29,7 @@ func TestTodosAll(t *testing.T) {
 	tests := []RequestTest{
 		{
 			Before:  func(c *Client) {},
-			Request: MustRequest("GET", "/todos"),
+			Request: MustRequest("GET", "/todos", nil),
 			Check: func(resp *httptest.ResponseRecorder) {
 				body := "[]\n"
 
@@ -41,9 +43,67 @@ func TestTodosAll(t *testing.T) {
 			Before: func(c *Client) {
 				c.Todos.Create("Hello")
 			},
-			Request: MustRequest("GET", "/todos"),
+			Request: MustRequest("GET", "/todos", nil),
 			Check: func(resp *httptest.ResponseRecorder) {
 				body := `[{"id":"1234","text":"Hello","completed_at":null}]` + "\n"
+
+				if resp.Body.String() != body {
+					t.Errorf("Body => %s; want %s", resp.Body.String(), body)
+				}
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		c := New()
+		s := NewServer(c)
+
+		resp := httptest.NewRecorder()
+		req := tt.Request
+
+		tt.Before(c)
+		s.ServeHTTP(resp, req)
+		tt.Check(resp)
+	}
+}
+
+func TestTodosCreate(t *testing.T) {
+	tests := []RequestTest{
+		{
+			Before:  func(c *Client) {},
+			Request: MustRequest("POST", "/todos", strings.NewReader(`{"text":"Hello"}`)),
+			Check: func(resp *httptest.ResponseRecorder) {
+				body := `{"id":"1234","text":"Hello","completed_at":null}` + "\n"
+
+				if resp.Body.String() != body {
+					t.Errorf("Body => %s; want %s", resp.Body.String(), body)
+				}
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		c := New()
+		s := NewServer(c)
+
+		resp := httptest.NewRecorder()
+		req := tt.Request
+
+		tt.Before(c)
+		s.ServeHTTP(resp, req)
+		tt.Check(resp)
+	}
+}
+
+func TestTodosDelete(t *testing.T) {
+	tests := []RequestTest{
+		{
+			Before: func(c *Client) {
+				c.Todos.Create("Hello")
+			},
+			Request: MustRequest("DELETE", "/todos/1234", strings.NewReader(`{"text":"Hello"}`)),
+			Check: func(resp *httptest.ResponseRecorder) {
+				body := `{"id":"1234","text":"Hello","completed_at":null}` + "\n"
 
 				if resp.Body.String() != body {
 					t.Errorf("Body => %s; want %s", resp.Body.String(), body)
