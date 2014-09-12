@@ -20,6 +20,16 @@ Creates a new todo.
 {"id":"faf24dae-ce0d-4b93-9efc-1051e1680366","text":"Hello","completed_at":null}
 ```
 
+**DELETE /todos/:id**
+
+Delete a todo.
+
+**Example Response**
+
+```json
+{"id":"faf24dae-ce0d-4b93-9efc-1051e1680366","text":"Hello","completed_at":null}
+```
+
 **POST /todos/:id/complete**
 
 Mark the todo is complete.
