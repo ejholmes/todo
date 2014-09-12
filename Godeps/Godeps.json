@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/remind101/todo",
+	"ImportPath": "github.com/ejholmes/todo",
 	"GoVersion": "go1.3",
 	"Packages": [
 		"./..."
