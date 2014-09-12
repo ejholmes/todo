@@ -66,6 +66,7 @@ func NewServer(c *Client) *Server {
 // Handle adds a handle to the router.
 func (s *Server) Handle(method, path string, fn HandlerFunc) {
 	s.mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		fn(s.Client, &ResponseWriter{w}, &Request{r})
 	}).Methods(method)
 }
