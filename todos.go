@@ -6,6 +6,11 @@ import (
 	"code.google.com/p/go-uuid/uuid"
 )
 
+// GenID is used to generate a unique id.
+var GenID = func() string {
+	return uuid.New()
+}
+
 // A Todo represents a thing you gotta do.
 type Todo struct {
 	ID string `json:"id"`
@@ -68,7 +73,7 @@ func (s *TodosService) Delete(id string) (*Todo, error) {
 
 // Insert inserts a Todo.
 func (s *TodosService) Insert(t *Todo) (*Todo, error) {
-	t.ID = uuid.New()
+	t.ID = GenID()
 	s.todos[t.ID] = t
 	return t, nil
 }
