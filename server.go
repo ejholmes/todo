@@ -12,6 +12,9 @@ var (
 	// ErrBadRequest represents a 400 error.
 	ErrBadRequest = errors.New(http.StatusText(400))
 
+	// ErrNotFound represents a 404 error.
+	ErrNotFound = errors.New(http.StatusText(404))
+
 	// ErrInternalServer represents a 500 error.
 	ErrInternalServer = errors.New(http.StatusText(500))
 )
@@ -62,6 +65,8 @@ func NewServer(c *Client) *Server {
 
 	s.Handle("GET", "/todos", TodosList)
 	s.Handle("POST", "/todos", TodosCreate)
+	s.Handle("POST", "/todos/{id}/complete", TodosComplete)
+	s.Handle("DELETE", "/todos/{id}/complete", TodosUncomplete)
 
 	return s
 }
@@ -102,6 +107,39 @@ func TodosCreate(c *Client, w *ResponseWriter, r *Request) {
 		w.Error(400, ErrBadRequest)
 		return
 	}
+
+	w.Encode(t)
+}
+
+// TodosComplete marks a Todo as complete.
+func TodosComplete(c *Client, w *ResponseWriter, r *Request) {
+	withTodo(c, w, r, func(t *Todo) {
+		t.Complete()
+	})
+}
+
+// TodosUncomplete marks a Todo as uncomplete
+func TodosUncomplete(c *Client, w *ResponseWriter, r *Request) {
+	withTodo(c, w, r, func(t *Todo) {
+		t.Uncomplete()
+	})
+}
+
+func withTodo(c *Client, w *ResponseWriter, r *Request, fn func(*Todo)) {
+	vars := mux.Vars(r.Request)
+
+	t, err := c.Todos.Find(vars["id"])
+	if err != nil {
+		w.Error(400, ErrBadRequest)
+		return
+	}
+
+	if t == nil {
+		w.Error(404, ErrNotFound)
+		return
+	}
+
+	fn(t)
 
 	w.Encode(t)
 }
