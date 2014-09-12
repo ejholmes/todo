@@ -10,7 +10,10 @@ import (
 
 var (
 	// ErrBadRequest represents a 400 error.
-	ErrBadRequest = errors.New("bad request")
+	ErrBadRequest = errors.New(http.StatusText(400))
+
+	// ErrInternalServer represents a 500 error.
+	ErrInternalServer = errors.New(http.StatusText(500))
 )
 
 // ErrorResource represents an error response.
@@ -79,7 +82,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // TodosList returns all Todos.
 func TodosList(c *Client, w *ResponseWriter, r *Request) {
-	todos, _ := c.Todos.All()
+	todos, err := c.Todos.All()
+	if err != nil {
+		w.Error(500, ErrInternalServer)
+	}
+
 	w.Encode(todos)
 }
 
