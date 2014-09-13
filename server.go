@@ -93,7 +93,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, PATCH, GET, DELETE, OPTIONS")
-	s.mux.ServeHTTP(w, r)
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(200)
+	} else {
+		s.mux.ServeHTTP(w, r)
+	}
 }
 
 // TodosList returns all Todos.
