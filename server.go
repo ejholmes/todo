@@ -87,7 +87,7 @@ func (s *Server) Handle(method, path string, fn HandlerFunc) {
 	s.mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Headers", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, PATCH, GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, PATCH, GET, DELETE, OPTIONS")
 		fn(s.Client, &ResponseWriter{w}, &Request{r})
 	}).Methods(method)
 }
