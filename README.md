@@ -1,3 +1,7 @@
+# Todo
+
+Todo is a simple Go backend for storing Todo's, running at http://r101-todo.herokuapp.com/todos
+
 ## API
 
 ### GET /todos
