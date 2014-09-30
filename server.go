@@ -40,7 +40,13 @@ type ResponseWriter struct {
 
 // Encode encodes v into the response as json.
 func (w *ResponseWriter) Encode(v interface{}) error {
-	return json.NewEncoder(w).Encode(v)
+	w.Header().Set("Content-Type", "application/json")
+	raw, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		return err
+	}
+	_, err = w.Write(append(raw, '\n'))
+	return err
 }
 
 // Error response with an error.
