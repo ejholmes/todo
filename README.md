@@ -1,6 +1,6 @@
 ## API
 
-**GET /todos**
+### GET /todos
 
 Returns all todos.
 
@@ -22,7 +22,7 @@ curl http://r101-todo.herokuapp.com/todos
 ]
 ```
 
-**POST /todos**
+### POST /todos
 
 Creates a new todo.
 
@@ -42,7 +42,7 @@ curl -d '{"text": "Take out the trash"}' http://r101-todo.herokuapp.com/todos
 }
 ```
 
-**DELETE /todos/:id**
+### DELETE /todos/:id
 
 Delete a todo.
 
@@ -62,7 +62,7 @@ curl -X DELETE http://r101-todo.herokuapp.com/todos/6a84b9f1-8acf-4e37-a29b-e11f
 }
 ```
 
-**PATCH /todos/:id**
+### PATCH /todos/:id
 
 Update a todo
 
@@ -82,7 +82,7 @@ curl -X PATCH -d '{"text":"Walk the dog"}' http://r101-todo.herokuapp.com/todos/
 }
 ```
 
-**POST /todos/:id/complete**
+### POST /todos/:id/complete
 
 Mark the todo is complete.
 
@@ -102,7 +102,7 @@ curl -X POST http://r101-todo.herokuapp.com/todos/6a84b9f1-8acf-4e37-a29b-e11fa1
 }
 ```
 
-**DELETE /todos/:id/complete**
+### DELETE /todos/:id/complete
 
 Mark the todo as not complete.
 
