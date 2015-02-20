@@ -2,7 +2,7 @@ package todo
 
 import "testing"
 
-func TestTodo_Complete(t *testing.T) {
+func TestTodoComplete(t *testing.T) {
 	td := &Todo{}
 	td.Complete()
 
@@ -11,7 +11,7 @@ func TestTodo_Complete(t *testing.T) {
 	}
 }
 
-func TestTodo_Uncomplete(t *testing.T) {
+func TestTodoUncomplete(t *testing.T) {
 	td := &Todo{}
 	td.Complete()
 	td.Uncomplete()
