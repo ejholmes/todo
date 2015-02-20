@@ -94,6 +94,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, PATCH, GET, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 	if r.Method == "OPTIONS" {
 		w.WriteHeader(200)
