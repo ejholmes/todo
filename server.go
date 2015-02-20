@@ -92,7 +92,7 @@ func (s *Server) Handle(method, path string, fn HandlerFunc) {
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, PATCH, GET, DELETE, OPTIONS")
 
 	if r.Method == "OPTIONS" {
